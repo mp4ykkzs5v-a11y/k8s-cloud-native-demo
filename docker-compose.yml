@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: k8s-backend:v1
+    container_name: k8s-backend
+    ports:
+      - "8000:8000"
+    environment:
+      APP_NAME: k8s-cloud-native-demo
+      APP_ENV: compose
+      APP_VERSION: v1
+      LOG_LEVEL: info
+      SECRET_TOKEN: compose-secret-token
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: k8s-frontend:v1
+    container_name: k8s-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

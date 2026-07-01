@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: k8s-demo
+data:
+  APP_NAME: "k8s-cloud-native-demo"
+  APP_ENV: "kubernetes"
+  APP_VERSION: "v1"
+  LOG_LEVEL: "info"

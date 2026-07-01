@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: backend-health-check
+  namespace: k8s-demo
+spec:
+  schedule: "*/2 * * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: backend-health-check
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: health-check
+              image: k8s-backend:v1
+              imagePullPolicy: Never
+              command:
+                - python
+                - -c
+                - |
+                  import urllib.request
+                  import time
+
+                  url = "http://backend-service:8000/health"
+                  print("Start backend health check")
+                  print("Target:", url)
+
+                  with urllib.request.urlopen(url, timeout=5) as response:
+                      body = response.read().decode("utf-8")
+                      print("Status code:", response.status)
+                      print("Response body:", body)
+
+                  print("Check finished at", int(time.time()))
